@@ -3,7 +3,7 @@
 
 import datetime
 from app import app
-from models import db, Employee, Meeting, Project
+from models import db, Employee, Meeting, Project, employee_meetings
 
 with app.app_context():
 
@@ -11,6 +11,9 @@ with app.app_context():
     Employee.query.delete()
     Meeting.query.delete()
     Project.query.delete()
+    #Since the table is not created from a model class, you'll need to delete it using
+    db.session.query(employee_meetings).delete()
+    db.session.commit()
 
     # Add employees
     e1 = Employee(name="Uri Lee", hire_date=datetime.datetime(2022, 5, 17))
@@ -40,4 +43,13 @@ with app.app_context():
 
     # Many-to-many relationship between employee and meeting
 
+    # Add meetings to an employee
+    e1.meetings.append(m1)
+    e1.meetings.append(m2)
+
+    # Add employees to a meeting
+    m2.employees.append(e2)
+    m2.employees.append(e3)
+    m2.employees.append(e4)
+    db.session.commit()
     # Many-to-many relationship between employee and project through assignment
